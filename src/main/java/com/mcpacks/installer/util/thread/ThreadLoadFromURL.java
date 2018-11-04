@@ -21,7 +21,7 @@ public class ThreadLoadFromURL extends Thread {
 			HttpURLConnection connection = (HttpURLConnection) this.url.openConnection();
 			connection.addRequestProperty("User-Agent", "MCPacks");
 			if (this.loadListener != null) {
-				this.loadListener.load(connection.getInputStream());
+				this.loadListener.load(connection);
 			}
 		} catch (Throwable t) {
 			if (this.errorListener.onError(t)) {

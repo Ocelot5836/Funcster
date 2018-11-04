@@ -5,22 +5,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
-import com.google.common.collect.Lists;
 import com.mcpacks.installer.Main;
-import com.mcpacks.installer.resource.Resource;
-import com.mcpacks.installer.util.thread.ThreadSaveFile;
 import com.renderengine.gfx.font.Font;
 import com.renderengine.gfx.font.Font.FontCharacter;
 
 public class Utils {
-
-	private static final List<Resource> DOWNLOADING = Lists.<Resource>newArrayList();
 
 	public static BufferedImage loadImage(String location) {
 		try {
@@ -84,29 +76,5 @@ public class Utils {
 		}
 
 		return text;
-	}
-
-	@Nullable
-	public static File retrieveResource(Resource resource, boolean forceDownload) {
-		File folder = new File(Main.DOWNLOADS_FOLDER, resource.getFormattedTitle() + "/" + resource.getVersion());
-		File archive = new File(folder, "resource.zip");
-
-		try {
-			if (!DOWNLOADING.contains(resource)) {
-				if (!archive.exists() || forceDownload) {
-					DOWNLOADING.add(resource);
-					ThreadSaveFile thread = new ThreadSaveFile(new URL(resource.getDownloadLink()), archive);
-					thread.setErrorListener((error) -> {
-						Main.LOGGER.info("Could not download \'" + resource.getTitle() + "\' from \'" + resource.getDownloadLink() + "\'", error);
-						return false;
-					});
-					thread.start();
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return archive.exists() ? archive : null;
 	}
 }

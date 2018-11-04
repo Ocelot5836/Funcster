@@ -1,18 +1,27 @@
 package com.mcpacks.installer.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mcpacks.installer.Main;
 import com.mcpacks.installer.resource.Resource;
 import com.mcpacks.installer.resource.Resource.ResourceType;
+import com.mcpacks.installer.util.thread.ThreadSaveFile;
 
 public class ResourceLoader {
 
+	private static final List<Resource> DOWNLOADING = Lists.<Resource>newArrayList();
 	public static final List<Resource> RESOURCES = new ArrayList<Resource>();
 
 	public static final List<Resource> DATAPACKS = new ArrayList<Resource>();
@@ -63,6 +72,40 @@ public class ResourceLoader {
 				continue;
 			}
 		}
+	}
+
+	@Nullable
+	public static File retrieveResource(Resource resource, boolean forceDownload) {
+		File folder = new File(Main.DOWNLOADS_FOLDER, resource.getFormattedTitle() + "/" + resource.getVersion());
+		File archive = new File(folder, "resource.zip");
+
+		try {
+			if (!DOWNLOADING.contains(resource)) {
+				if (!archive.exists() || forceDownload) {
+					DOWNLOADING.add(resource);
+					ThreadSaveFile thread = new ThreadSaveFile(new URL(resource.getDownloadLink()), archive) {
+						@Override
+						public void load(HttpURLConnection connection) throws Exception {
+							if (connection.getContentType() != null) {
+								super.load(connection);
+								DOWNLOADING.remove(resource);
+							} else {
+								Main.LOGGER.info("Could not download \'" + resource.getTitle() + "\' from \'" + resource.getDownloadLink() + "\' as it is not hosted on MinecraftPacks");
+							}
+						}
+					};
+					thread.setErrorListener((error) -> {
+						Main.LOGGER.info("Could not download \'" + resource.getTitle() + "\' from \'" + resource.getDownloadLink() + "\'", error);
+						return false;
+					});
+					thread.start();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return archive.exists() ? archive : null;
 	}
 
 	private static Map<String, String> parseCustomFields(String customFields) {

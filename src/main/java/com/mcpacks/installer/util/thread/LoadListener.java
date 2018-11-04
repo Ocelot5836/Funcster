@@ -1,8 +1,8 @@
 package com.mcpacks.installer.util.thread;
 
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 public interface LoadListener {
 
-	void load(InputStream data) throws Exception;
+	void load(HttpURLConnection connection) throws Exception;
 }

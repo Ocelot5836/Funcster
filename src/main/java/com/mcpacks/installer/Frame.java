@@ -12,7 +12,6 @@ import com.mcpacks.installer.component.LayoutResourceSelection;
 import com.mcpacks.installer.resource.Resource;
 import com.mcpacks.installer.util.Configuration;
 import com.mcpacks.installer.util.ResourceLoader;
-import com.mcpacks.installer.util.Utils;
 import com.mcpacks.installer.util.thread.ThreadLoadFromURL;
 import com.renderengine.api.Display;
 import com.renderengine.api.components.ScrollableLayout;
@@ -48,8 +47,8 @@ public class Frame {
 		ScrollableLayout layoutDatapackSelection = new LayoutResourceSelection();
 
 		ThreadLoadFromURL thread = new ThreadLoadFromURL(new URL(Main.API_LINK));
-		thread.setLoadListener((data) -> {
-			ResourceLoader.load(new JsonParser().parse("[" + IOUtils.toString(data, Charset.defaultCharset()).replaceAll("\\}\\{", "\\}\\,\\{") + "]").getAsJsonArray());
+		thread.setLoadListener((connection) -> {
+			ResourceLoader.load(new JsonParser().parse("[" + IOUtils.toString(connection.getInputStream(), Charset.defaultCharset()).replaceAll("\\}\\{", "\\}\\,\\{") + "]").getAsJsonArray());
 			this.loaded = true;
 			for (int i = 0; i < ResourceLoader.DATAPACKS.size(); i++) {
 				Resource resource = ResourceLoader.DATAPACKS.get(i);
@@ -65,7 +64,7 @@ public class Frame {
 	public void update() {
 		if (ResourceLoader.RESOURCES.size() > 0) {
 			for (int i = 0; i < ResourceLoader.RESOURCES.size(); i++) {
-				System.out.println(Utils.retrieveResource(ResourceLoader.RESOURCES.get(i), false));
+				System.out.println(ResourceLoader.retrieveResource(ResourceLoader.RESOURCES.get(i), false));
 			}
 		}
 	}

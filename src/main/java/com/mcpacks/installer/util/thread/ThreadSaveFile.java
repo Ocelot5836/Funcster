@@ -2,7 +2,7 @@ package com.mcpacks.installer.util.thread;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -19,11 +19,11 @@ public class ThreadSaveFile extends ThreadLoadFromURL implements LoadListener {
 	}
 
 	@Override
-	public void load(InputStream data) throws Exception {
-		if (!saveFile.getParentFile().exists()) {
-			saveFile.getParentFile().mkdirs();
+	public void load(HttpURLConnection connection) throws Exception {
+		if (!this.saveFile.getParentFile().exists()) {
+			this.saveFile.getParentFile().mkdirs();
 		}
-		
-		IOUtils.write(IOUtils.toString(data, Charset.defaultCharset()), new FileOutputStream(this.saveFile), Charset.defaultCharset());
+
+		IOUtils.write(IOUtils.toString(connection.getInputStream(), Charset.defaultCharset()), new FileOutputStream(this.saveFile), Charset.defaultCharset());
 	}
 }

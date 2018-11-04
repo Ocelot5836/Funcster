@@ -1,6 +1,6 @@
 package com.mcpacks.installer.util.thread;
 
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -13,7 +13,7 @@ public class ThreadLoadImage extends ThreadLoadFromURL implements LoadListener {
 	}
 
 	@Override
-	public void load(InputStream data) throws Exception {
-		ImageLoader.load(this.getUrl(), ImageIO.read(data));
+	public void load(HttpURLConnection connection) throws Exception {
+		ImageLoader.load(this.getUrl(), ImageIO.read(connection.getInputStream()));
 	}
 }
