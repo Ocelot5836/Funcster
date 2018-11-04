@@ -22,9 +22,13 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# stuff
+# Custom Things
+gradlew*
 .classpath
 .project
+.gradle/
 .settings/
-cache/
+gradle/
+build/
+data/
 bin/
