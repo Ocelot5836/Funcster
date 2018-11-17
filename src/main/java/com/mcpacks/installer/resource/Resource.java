@@ -1,6 +1,9 @@
 package com.mcpacks.installer.resource;
 
+import java.io.File;
 import java.util.Map;
+
+import com.mcpacks.installer.Main;
 
 public class Resource {
 
@@ -39,7 +42,7 @@ public class Resource {
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public String getFormattedTitle() {
 		return this.getTitle().toLowerCase().replaceAll(" ", "-");
 	}
@@ -86,6 +89,10 @@ public class Resource {
 
 	public String getDownloadLink() {
 		return "https://www.minecraftpacks.net/resources/" + this.getFormattedTitle() + "." + this.getId() + "/download";
+	}
+
+	public File getLocalLoation() {
+		return new File(Main.DOWNLOADS_FOLDER, this.getFormattedTitle() + "/" + this.getVersion() + "/resource.zip");
 	}
 
 	public Map<String, String> getCustomFields() {

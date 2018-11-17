@@ -1,10 +1,18 @@
 package com.mcpacks.installer.component;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 
 import com.mcpacks.installer.Main;
+import com.mcpacks.installer.component.ResourceModifyButton.EnumIcon;
 import com.mcpacks.installer.resource.Resource;
 import com.mcpacks.installer.util.DynamicTextureLoader;
+import com.mcpacks.installer.util.ResourceLoader;
 import com.mcpacks.installer.util.Utils;
 import com.mcpacks.installer.util.thread.ImageLoader;
 import com.renderengine.api.components.Layout;
@@ -26,9 +34,50 @@ public class LayoutResourceItem extends Layout {
 	public void init(Layout layout) {
 		super.init(layout);
 
-		this.button = new ResourceModifyButton(171 * Main.SCALE, 3 * Main.SCALE, ResourceModifyButton.EnumSize.NORMAL, ResourceModifyButton.EnumIcon.LARGE_DELETE, 0xffE8823F);
+		this.button = new ResourceModifyButton(171 * Main.SCALE, 3 * Main.SCALE, ResourceModifyButton.EnumSize.NORMAL, this.resource.getLocalLoation().exists() ? EnumIcon.LARGE_DELETE : EnumIcon.LARGE_DOWNLOAD, 0xffE8823F);
 		this.button.setListener((mouseButton, mouseX, mouseY) -> {
-			System.out.println(this.resource.getId());
+			if (!ResourceLoader.isDownloading(this.resource)) {
+				if (this.resource.getLocalLoation().exists()) {
+					if (this.resource.getLocalLoation().delete()) {
+						this.resource.getLocalLoation().getParentFile().delete();
+						this.button.setIcon(EnumIcon.LARGE_DOWNLOAD);
+					} else {
+						Main.LOGGER.warn("Could not delete local resource \'" + this.resource.getLocalLoation() + "\'");
+					}
+				} else {
+					ResourceLoader.retrieveResource(this.resource, false, (success, archive) -> {
+						try {
+							if (!success) {
+								this.button.setIcon(EnumIcon.NONE);
+								return;
+							}
+
+							if (archive != null) {
+								this.button.setIcon(EnumIcon.LARGE_DELETE);
+								Main.LOGGER.info("Successfully downloaded \'" + this.resource.getTitle() + "\' from \'" + this.resource.getDownloadLink() + "\'");
+								if (Main.currentWorldFolder != null) {
+									File datapackArchive = new File(Main.currentWorldFolder, "datapacks/" + this.resource.getFormattedTitle() + ".zip");
+									if (!datapackArchive.getParentFile().exists()) {
+										datapackArchive.mkdirs();
+									}
+									if (datapackArchive.exists()) {
+										datapackArchive.delete();
+									}
+									FileInputStream in = new FileInputStream(archive);
+									FileOutputStream out = new FileOutputStream(datapackArchive);
+									IOUtils.copy(in, out);
+								} else {
+									// TODO remove dis
+									String worldName = "1.13 Survival";
+									Main.currentWorldFolder = new File(Main.minecraftDirectory, "saves/" + worldName);
+								}
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					});
+				}
+			}
 		});
 		super.addComponent(this.button);
 	}

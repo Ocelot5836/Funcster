@@ -6,7 +6,7 @@ import com.renderengine.api.components.ScrollableLayout;
 
 public class LayoutResourceSelection extends ScrollableLayout {
 
-	public static final int OPTIONS_BAR_HEIGHT = 25;
+	public static final int OPTIONS_BAR_HEIGHT = 0;
 	
 	public LayoutResourceSelection() {
 		super(0, OPTIONS_BAR_HEIGHT * Main.SCALE, (int) (200 * Main.SCALE), (int) (Display.getHeight() - OPTIONS_BAR_HEIGHT * Main.SCALE));

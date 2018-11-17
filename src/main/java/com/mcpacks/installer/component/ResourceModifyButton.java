@@ -24,11 +24,39 @@ public class ResourceModifyButton extends ButtonComponent {
 	@Override
 	public void render(float x, float y, double mouseX, double mouseY, float partialTicks) {
 		Main.getInstance().getTextureManager().bind(Main.WIDGETS);
-		Renderer.renderTexturedRect(this.getX() + this.getOffsetX(), this.getY() + this.getOffsetY(), this.size.getU(), this.size.getV(), this.getWidth(), this.getHeight(), this.size.getWidth(), this.size.getHeight(), 256, 256, this.color);
+		Renderer.renderTexturedRect(x, y, this.size.getU(), this.size.getV(), this.getWidth(), this.getHeight(), this.size.getWidth(), this.size.getHeight(), 256, 256, this.color);
+
+		Main.getInstance().getTextureManager().bind(Main.ICONS);
+		Renderer.renderTexturedRect(x + this.getWidth() / 2 - this.icon.getWidth() * Main.SCALE / 2, y + this.getHeight() / 2 - this.icon.getHeight() * Main.SCALE / 2, this.icon.getU(), this.icon.getV(), this.icon.getWidth() * Main.SCALE, this.icon.getHeight() * Main.SCALE, this.icon.getWidth(), this.icon.getHeight(), 256, 256);
 
 		if (this.isHovered(mouseX, mouseY)) {
-			Renderer.renderColoredRect(this.getX() + this.getOffsetX(), this.getY() + this.getOffsetY(), this.getWidth(), this.getHeight(), 0xaaffffff);
+			Renderer.renderColoredRect(x + Main.SCALE, y + Main.SCALE, this.getWidth() - Main.SCALE * 2, this.getHeight() - Main.SCALE * 2, 0x22000000);
 		}
+	}
+
+	public EnumSize getSize() {
+		return size;
+	}
+
+	public EnumIcon getIcon() {
+		return icon;
+	}
+
+	public int getColor() {
+		return color;
+	}
+
+	public void setSize(EnumSize size) {
+		this.size = size;
+		this.setSize(size.getWidth() * Main.SCALE, size.getHeight() * Main.SCALE);
+	}
+
+	public void setIcon(EnumIcon icon) {
+		this.icon = icon;
+	}
+
+	public void setColor(int color) {
+		this.color = color;
 	}
 
 	public enum EnumSize {

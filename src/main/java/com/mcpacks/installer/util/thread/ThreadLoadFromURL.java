@@ -24,7 +24,7 @@ public class ThreadLoadFromURL extends Thread {
 				this.loadListener.load(connection);
 			}
 		} catch (Throwable t) {
-			if (this.errorListener.onError(t)) {
+			if (this.errorListener == null || this.errorListener.onError(t)) {
 				t.printStackTrace();
 			}
 		}

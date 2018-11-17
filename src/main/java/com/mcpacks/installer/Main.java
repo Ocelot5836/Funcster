@@ -29,6 +29,9 @@ public class Main extends Application implements Runnable {
 	public static final File DEFAULT_MINECRAFT_FOLDER = new File(Utils.getAppData(), ".minecraft");
 	public static final String API_LINK = "https://minecraftpacks.net/api/resources.php";
 
+	public static File minecraftDirectory = null;
+	public static File currentWorldFolder = null;
+
 	public static final ResourceLocation UNKNOWN = new ResourceLocation("textures/unknown.png");
 	public static final ResourceLocation UI = new ResourceLocation("textures/ui.png");
 	public static final ResourceLocation WIDGETS = new ResourceLocation("textures/widgets.png");

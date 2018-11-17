@@ -22,6 +22,7 @@ import com.mcpacks.installer.util.thread.ThreadSaveFile;
 public class ResourceLoader {
 
 	private static final List<Resource> DOWNLOADING = Lists.<Resource>newArrayList();
+	private static final List<Resource> REJECTED = Lists.<Resource>newArrayList();
 	public static final List<Resource> RESOURCES = new ArrayList<Resource>();
 
 	public static final List<Resource> DATAPACKS = new ArrayList<Resource>();
@@ -75,13 +76,17 @@ public class ResourceLoader {
 	}
 
 	@Nullable
-	public static File retrieveResource(Resource resource, boolean forceDownload) {
-		File folder = new File(Main.DOWNLOADS_FOLDER, resource.getFormattedTitle() + "/" + resource.getVersion());
-		File archive = new File(folder, "resource.zip");
+	public static void retrieveResource(Resource resource, boolean forceDownload) {
+		retrieveResource(resource, forceDownload, null);
+	}
+
+	@Nullable
+	public static void retrieveResource(Resource resource, boolean forceDownload, @Nullable ResourceDownloadListener downloadCompletedListener) {
+		File archive = resource.getLocalLoation();
 
 		try {
 			if (!DOWNLOADING.contains(resource)) {
-				if (!archive.exists() || forceDownload) {
+				if ((!archive.exists() && !REJECTED.contains(resource)) || forceDownload) {
 					DOWNLOADING.add(resource);
 					ThreadSaveFile thread = new ThreadSaveFile(new URL(resource.getDownloadLink()), archive) {
 						@Override
@@ -89,23 +94,39 @@ public class ResourceLoader {
 							if (connection.getContentType() != null) {
 								super.load(connection);
 								DOWNLOADING.remove(resource);
+								if (downloadCompletedListener != null) {
+									downloadCompletedListener.onDownload(true, archive.exists() ? archive : null);
+								}
 							} else {
 								Main.LOGGER.info("Could not download \'" + resource.getTitle() + "\' from \'" + resource.getDownloadLink() + "\' as it is not hosted on MinecraftPacks");
+								DOWNLOADING.remove(resource);
+								REJECTED.add(resource);
+								if (downloadCompletedListener != null) {
+									downloadCompletedListener.onDownload(false, archive.exists() ? archive : null);
+								}
 							}
 						}
 					};
 					thread.setErrorListener((error) -> {
 						Main.LOGGER.info("Could not download \'" + resource.getTitle() + "\' from \'" + resource.getDownloadLink() + "\'", error);
+						DOWNLOADING.remove(resource);
+						REJECTED.add(resource);
+						if (downloadCompletedListener != null) {
+							downloadCompletedListener.onDownload(false, archive.exists() ? archive : null);
+						}
 						return false;
 					});
 					thread.start();
 				}
+			} else if (downloadCompletedListener != null) {
+				downloadCompletedListener.onDownload(archive.exists(), archive.exists() ? archive : null);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			if (downloadCompletedListener != null) {
+				downloadCompletedListener.onDownload(archive.exists(), archive.exists() ? archive : null);
+			}
 		}
-		return archive.exists() ? archive : null;
 	}
 
 	private static Map<String, String> parseCustomFields(String customFields) {
@@ -158,5 +179,9 @@ public class ResourceLoader {
 		}
 
 		return map;
+	}
+
+	public static boolean isDownloading(Resource resource) {
+		return DOWNLOADING.contains(resource);
 	}
 }
