@@ -91,13 +91,13 @@ public class ResourceLoader {
 					ThreadSaveFile thread = new ThreadSaveFile(new URL(resource.getDownloadLink()), archive) {
 						@Override
 						public void load(HttpURLConnection connection) throws Exception {
-							if (connection.getContentType() != null) {
+							try {
 								super.load(connection);
 								DOWNLOADING.remove(resource);
 								if (downloadCompletedListener != null) {
 									downloadCompletedListener.onDownload(true, archive.exists() ? archive : null);
 								}
-							} else {
+							} catch (Exception e) {
 								Main.LOGGER.info("Could not download \'" + resource.getTitle() + "\' from \'" + resource.getDownloadLink() + "\' as it is not hosted on MinecraftPacks");
 								DOWNLOADING.remove(resource);
 								REJECTED.add(resource);

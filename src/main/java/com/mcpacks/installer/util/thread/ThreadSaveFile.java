@@ -2,10 +2,8 @@ package com.mcpacks.installer.util.thread;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 
@@ -25,6 +23,10 @@ public class ThreadSaveFile extends ThreadLoadFromURL implements LoadListener {
 			this.saveFile.getParentFile().mkdirs();
 		}
 
-		IOUtils.copy(new InputStreamReader(connection.getInputStream()), new FileOutputStream(this.saveFile), Charset.defaultCharset());
+		IOUtils.copy(connection.getInputStream(), new FileOutputStream(this.saveFile));
+	}
+
+	public File getSaveFile() {
+		return saveFile;
 	}
 }

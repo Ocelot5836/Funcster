@@ -37,14 +37,7 @@ public class LayoutResourceItem extends Layout {
 		this.button = new ResourceModifyButton(171 * Main.SCALE, 3 * Main.SCALE, ResourceModifyButton.EnumSize.NORMAL, this.resource.getLocalLoation().exists() ? EnumIcon.LARGE_DELETE : EnumIcon.LARGE_DOWNLOAD, 0xffE8823F);
 		this.button.setListener((mouseButton, mouseX, mouseY) -> {
 			if (!ResourceLoader.isDownloading(this.resource)) {
-				if (this.resource.getLocalLoation().exists()) {
-					if (this.resource.getLocalLoation().delete()) {
-						this.resource.getLocalLoation().getParentFile().delete();
-						this.button.setIcon(EnumIcon.LARGE_DOWNLOAD);
-					} else {
-						Main.LOGGER.warn("Could not delete local resource \'" + this.resource.getLocalLoation() + "\'");
-					}
-				} else {
+				if (!this.resource.getLocalLoation().exists()) {
 					ResourceLoader.retrieveResource(this.resource, false, (success, archive) -> {
 						try {
 							if (!success) {
