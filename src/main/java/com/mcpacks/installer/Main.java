@@ -46,6 +46,8 @@ public class Main extends Application implements Runnable {
 
 	public Main() {
 		instance = this;
+		
+		this.setClearColor(1, 0, 1, 1);
 	}
 
 	@Override

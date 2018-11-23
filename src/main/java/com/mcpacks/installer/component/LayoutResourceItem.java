@@ -5,8 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
+import java.nio.channels.Channels;
 
 import com.mcpacks.installer.Main;
 import com.mcpacks.installer.component.ResourceModifyButton.EnumIcon;
@@ -56,9 +55,10 @@ public class LayoutResourceItem extends Layout {
 									if (datapackArchive.exists()) {
 										datapackArchive.delete();
 									}
-									FileInputStream in = new FileInputStream(archive);
-									FileOutputStream out = new FileOutputStream(datapackArchive);
-									IOUtils.copy(in, out);
+
+									FileOutputStream os = new FileOutputStream(datapackArchive);
+									os.getChannel().transferFrom(Channels.newChannel(new FileInputStream(archive)), 0, Long.MAX_VALUE);
+									os.close();
 								} else {
 									// TODO remove dis
 									String worldName = "1.13 Survival";

@@ -88,11 +88,11 @@ public class Resource {
 	}
 
 	public String getDownloadLink() {
-		return "https://www.minecraftpacks.net/resources/" + this.getFormattedTitle() + "." + this.getId() + "/download";
+		return "https://www.minecraftpacks.net/resources/" + this.getId() + "/download";
 	}
 
 	public File getLocalLoation() {
-		return new File(Main.DOWNLOADS_FOLDER, this.getFormattedTitle() + "/" + this.getVersion() + "/resource.zip");
+		return new File(Main.DOWNLOADS_FOLDER, this.getId() + "/" + this.getVersion() + "/resource.zip");
 	}
 
 	public Map<String, String> getCustomFields() {

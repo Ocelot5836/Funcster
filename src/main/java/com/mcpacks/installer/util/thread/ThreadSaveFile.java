@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
+import java.nio.channels.Channels;
 
 public class ThreadSaveFile extends ThreadLoadFromURL implements LoadListener {
 
@@ -22,8 +21,10 @@ public class ThreadSaveFile extends ThreadLoadFromURL implements LoadListener {
 		if (!this.saveFile.getParentFile().exists()) {
 			this.saveFile.getParentFile().mkdirs();
 		}
-
-		IOUtils.copy(connection.getInputStream(), new FileOutputStream(this.saveFile));
+		
+		FileOutputStream os = new FileOutputStream(this.saveFile);
+		os.getChannel().transferFrom(Channels.newChannel(connection.getInputStream()), 0, Long.MAX_VALUE);
+		os.close();
 	}
 
 	public File getSaveFile() {

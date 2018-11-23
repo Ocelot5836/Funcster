@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 import com.mcpacks.installer.Main;
 import com.mcpacks.installer.resource.Resource;
 import com.mcpacks.installer.resource.Resource.ResourceType;
-import com.mcpacks.installer.util.thread.ThreadSaveZipFile;
+import com.mcpacks.installer.util.thread.ThreadSaveFile;
 
 public class ResourceLoader {
 
@@ -88,7 +88,7 @@ public class ResourceLoader {
 			if (!DOWNLOADING.contains(resource)) {
 				if ((!archive.exists() && !REJECTED.contains(resource)) || forceDownload) {
 					DOWNLOADING.add(resource);
-					ThreadSaveZipFile thread = new ThreadSaveZipFile(new URL(resource.getDownloadLink()), archive) {
+					ThreadSaveFile thread = new ThreadSaveFile(new URL(resource.getDownloadLink()), archive) {
 						@Override
 						public void load(HttpURLConnection connection) throws Exception {
 							try {
