@@ -46,7 +46,7 @@ public class Main extends Application implements Runnable {
 
 	public Main() {
 		instance = this;
-		
+
 		this.setClearColor(1, 0, 1, 1);
 	}
 
@@ -68,8 +68,8 @@ public class Main extends Application implements Runnable {
 		if (!DATA_FOLDER.exists()) {
 			DATA_FOLDER.mkdirs();
 		}
-		
-		if(!DOWNLOADS_FOLDER.exists()) {
+
+		if (!DOWNLOADS_FOLDER.exists()) {
 			DOWNLOADS_FOLDER.mkdirs();
 		}
 	}
