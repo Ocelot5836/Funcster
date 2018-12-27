@@ -3,6 +3,7 @@ package com.mcpacks.installer.resource;
 import java.io.File;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.mcpacks.installer.Main;
 
 public class Resource {
@@ -104,7 +105,9 @@ public class Resource {
 	}
 
 	public enum ResourceType {
-		DATA(2), RESOURCE(3), TOOL(4), UNKNOWN(-1);
+		UNKNOWN(-1), DATA(2), RESOURCE(3), TOOL(4), MAP(5);
+
+		private static final Map<Integer, ResourceType> ID_LOOKUP = Maps.<Integer, ResourceType>newHashMap();
 
 		private int id;
 
@@ -117,13 +120,13 @@ public class Resource {
 		}
 
 		public static ResourceType fromId(int id) {
-			if (id <= 1 || id >= 5)
-				return ResourceType.UNKNOWN;
-			for (int i = 0; i < ResourceType.values().length; i++) {
-				if (ResourceType.values()[i].id == id)
-					return ResourceType.values()[i];
+			return ID_LOOKUP.getOrDefault(id, UNKNOWN);
+		}
+
+		static {
+			for (ResourceType type : values()) {
+				ID_LOOKUP.put(type.getId(), type);
 			}
-			return ResourceType.UNKNOWN;
 		}
 	}
 }

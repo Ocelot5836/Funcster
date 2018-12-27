@@ -28,6 +28,7 @@ public class ResourceLoader {
 	public static final List<Resource> DATAPACKS = new ArrayList<Resource>();
 	public static final List<Resource> RESOURCEPACKS = new ArrayList<Resource>();
 	public static final List<Resource> TOOLS = new ArrayList<Resource>();
+	public static final List<Resource> MAPS = new ArrayList<Resource>();
 
 	public static void load(JsonArray data) throws Exception {
 		RESOURCES.clear();
@@ -59,14 +60,19 @@ public class ResourceLoader {
 						break;
 					case RESOURCE:
 						RESOURCEPACKS.add(resource);
-						RESOURCES.add(resource);
 						break;
 					case TOOL:
 						TOOLS.add(resource);
 						break;
+					case MAP:
+						MAPS.add(resource);
+						RESOURCES.add(resource);
+						break;
 					default:
 						break;
 					}
+				} else {
+					Main.LOGGER.warn("Resource \'" + object + "\' was marked as an unknown resource!");
 				}
 			} catch (Exception e) {
 				Main.LOGGER.warn("Could not load resource \'" + object + "\', Skipping", e);
