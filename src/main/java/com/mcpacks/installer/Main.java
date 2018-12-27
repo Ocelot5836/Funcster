@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mcpacks.installer.util.Utils;
+import com.mcpacks.installer.util.thread.ImageLoader;
 import com.renderengine.api.Application;
 import com.renderengine.api.Display;
 import com.renderengine.api.scenes.Scene;
@@ -93,6 +94,7 @@ public class Main extends Application implements Runnable {
 		super.cleanUp();
 
 		this.frame.stop();
+		ImageLoader.delete();
 	}
 
 	public Frame getFrame() {
